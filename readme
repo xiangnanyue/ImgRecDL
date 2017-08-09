@@ -1,0 +1,49 @@
+blog:
+
+http://www.jefftk.com/p/index
+
+tensorflow:
+
+https://www.tensorflow.org/tutorials/deep_cnn
+https://www.tensorflow.org/tutorials/image_retraining
+
+data base:
+# gallery
+http://retinagallery.com/
+http://retinagallery.com/index.php?cat=4
+# github all medical pictures for ml
+https://github.com/beamandrew/medical-data
+# kaggle diabetic retinopathy
+https://www.kaggle.com/c/diabetic-retinopathy-detection/data
+# Open-Access Medical Image Repositories
+http://www.aylward.org/notes/open-access-medical-image-repositories
+# medical signal process course database
+https://sites.google.com/site/hosseinrabbanikhorasgani/datasets-1
+# others
+http://cecas.clemson.edu/~ahoover/stare/
+
+curl -o name.zip "cUrl"
+
+A common way of improving the results of image training is by deforming, cropping, or brightening the training inputs in random ways.
+
+the bottleneck caching is no longer useful, since input images are never reused exactly.
+This means the training process takes a lot longer, so I recommend trying this as a way of fine-tuning your model once you've got one that you're reasonably happy with.
+
+You enable these distortions by passing --random_crop, --random_scale and --random_brightness to the script.
+These are all percentage values that control how much of each of the distortions is applied to each image
+
+It's reasonable to start with values of 5 or 10 for each of them and then experiment to see which of them help with your application.
+
+--flip_left_right will randomly mirror half of the images horizontally, which makes sense as long as those inversions are likely to happen in your application
+
+The --learning_rate controls the magnitude of the updates to the final layer during training. Intuitively if this is smaller then the learning will take longer, but it can end up helping the overall precision. That's not always the case though, so you need to experiment carefully to see what works for your case. The --train_batch_size controls how many images are examined during one training step, and because the learning rate is applied per batch you'll need to reduce it if you have larger batches to get the same overall effect.
+
+The usual split is to put 80% of the images into the main training set, keep 10% aside to run as validation frequently during training, and then have a final 10% that are used less often as a testing set to predict the real-world performance of the classifier.
+These ratios can be controlled using the --testing_percentage and --validation_percentage flags
+In general you should be able to leave these values at their defaults, since you won't usually find any advantage to training to adjusting them.
+
+The fluctuations can be greatly reduced, at the cost of some increase in training time, by choosing --validation_batch_size=-1, which uses the entire validation set for each accuracy computation.
+
+Once training is complete, you may find it insightful to examine misclassified images in the test set.
+This can be done by adding the flag --print_misclassified_test_images. This may help you get a feeling for which types of images were most confusing for the model, and which categories were most difficult to distinguish.
+
